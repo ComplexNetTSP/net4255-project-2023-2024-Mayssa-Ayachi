@@ -1,23 +1,52 @@
-version: '3'
+version: '3.8'
+
 services:
-  flaskapp:
+  flaskapp_with_db:
     build:
       context: .
-    ports:
-      - "5000:5000"
+      dockerfile: dockerfile
     environment:
+      - FLASK_APP=app_with_db.py
       - CONN_STR=mongodb://mongodb:27017/
+    networks:
+      - mynetwork
+    ports:
+      - "5001:5000"
     depends_on:
       - mongodb
-    networks:
-      - my_network
 
-  mongodb:
-    image: mongodb/mongodb-community-server
+  flaskapp_without_db:
+    build:
+      context: .
+      dockerfile: dockerfile.withoutdb
+    environment:
+      - FLASK_APP=app_without_db.py
     ports:
-      - "27017:27017"
+      - "5002:5000"
     networks:
-      - my_network
+      - mynetwork
+
+  nginx:
+    image: nginx:latest
+    build:
+      context: ./nginx
+      dockerfile: dockerfile.nginx
+    ports:
+      - "8080:80"
+    networks:
+      - mynetwork
+    depends_on:
+      - flaskapp_with_db
+      - flaskapp_without_db
+    volumes:
+      - /home/ayachi/Documents/GitHub/net4255-project-2023-2024-Mayssa-Ayachi/nginx/nginx.conf
+      
+  mongodb:
+    image: mongo:latest
+    networks:
+      - mynetwork
 
 networks:
-  my_network:
+  mynetwork:
+    driver: bridge
+
