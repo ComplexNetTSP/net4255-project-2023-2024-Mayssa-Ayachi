@@ -1,4 +1,4 @@
-#Answer to challenge number 8:
+# Answer to challenge number 8:
 
 In Kubernetes, a NodePort Service and a ClusterIP Service are both mechanisms to expose applications.
 * ClusterIP is accessible only within the Kubernetes cluster. It assigns a unique IP address to the service within the cluster and hence it exposes the set of pods in a service to other objects in the cluster.
